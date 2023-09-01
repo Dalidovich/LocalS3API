@@ -92,5 +92,51 @@ namespace LocalS3API.Service
             }
             return contentType;
         }
+
+        public void DeleteBucket(string bucketName)
+        {
+            var dirPath = GetBucketPath(bucketName);
+            if (Directory.Exists(dirPath))
+            {
+                Directory.Delete(dirPath, true);
+            }
+        }
+
+        public void DeleteBuckets(string[] bucketNames)
+        {
+            foreach (var name in bucketNames)
+            {
+                var dirPath = GetBucketPath(name);
+                if (Directory.Exists(dirPath))
+                {
+                    Directory.Delete(dirPath, true);
+                }
+            }
+        }
+
+        public void DeleteFile(string id, string bucketName)
+        {
+            var filePath = GetBucketPath(bucketName) + @"\" + id;
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+        }
+
+        public async Task<bool> ReplaseFile(string id, string bucketName, IFormFile file)
+        {
+            var filePath = GetBucketPath(bucketName) + @"\" + id;
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+                return true;
+            }
+
+            return false;
+        }
     }
 }

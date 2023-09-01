@@ -53,5 +53,37 @@ namespace LocalS3API.Controllers
 
             return Ok(response);
         }
+
+        [HttpDelete("bucket/single")]
+        public IActionResult DeleteBucket([FromQuery] string bucket)
+        {
+            _fileService.DeleteBucket(bucket);
+
+            return NoContent();
+        }
+
+        [HttpDelete("bucket/any")]
+        public IActionResult DeleteBuckets([FromQuery] string[] buckets)
+        {
+            _fileService.DeleteBuckets(buckets);
+
+            return NoContent();
+        }
+
+        [HttpDelete("file/single")]
+        public IActionResult DeleteFile([FromQuery] string id, [FromQuery] string bucket)
+        {
+            _fileService.DeleteFile(id, bucket);
+
+            return NoContent();
+        }
+
+        [HttpPut("file/replace")]
+        public async Task<IActionResult> ReplaseFile([FromQuery] string id, [FromQuery] string bucket, [FromForm] IFormFile file)
+        {
+            var response = await _fileService.ReplaseFile(id, bucket, file);
+
+            return response? Ok(): NotFound();
+        }
     }
 }
