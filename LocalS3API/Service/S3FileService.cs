@@ -38,7 +38,7 @@ namespace LocalS3API.Service
 
         private async Task<string> SaveFile(IFormFile file, string bucketName)
         {
-            var fileExtension= file.FileName.Substring(file.FileName.LastIndexOf('.') + 1);
+            var fileExtension = file.FileName.Substring(file.FileName.LastIndexOf('.') + 1);
             var saveName = $"{file.Name}{Guid.NewGuid()}.{fileExtension}";
             using (var fileStream = new FileStream(GetBucketPath(bucketName) + $"\\{saveName}", FileMode.Create))
             {
@@ -67,6 +67,19 @@ namespace LocalS3API.Service
             {
                 Path = ""
             };
+        }
+
+        public string[] GetFiles(string bucketName)
+        {
+            var dirPath = GetBucketPath(bucketName) + @"\";
+            if (Directory.Exists(dirPath))
+            {
+                return Directory.GetFiles(dirPath)
+                    .Select(x => x.Substring(x.LastIndexOf("\\") + 1))
+                    .ToArray();
+            }
+
+            return Array.Empty<string>();
         }
 
         private string GetContentType(string filePath)

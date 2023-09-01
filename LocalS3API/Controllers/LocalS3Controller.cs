@@ -32,12 +32,26 @@ namespace LocalS3API.Controllers
         }
 
         [HttpGet("load/file")]
-        [ResponseCache(VaryByHeader = "User-Agent", Duration = 60 * 2)]
+        [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Client, Duration = 60 * 2)]
         public IActionResult LoadFile([FromQuery] string id, [FromQuery] string bucket)
         {
             var response = _fileService.GetFile(id, bucket);
 
-            return File(response.FileStream, response.ContentType);
+            if (response.FileStream != null)
+            {
+                return File(response.FileStream, response.ContentType);
+            }
+
+            return NotFound();
+        }
+
+        [HttpGet("load/files")]
+        [ResponseCache(VaryByHeader = "User-Agent", Location = ResponseCacheLocation.Client, Duration = 60 * 2)]
+        public IActionResult LoadFiles([FromQuery] string bucket)
+        {
+            var response = _fileService.GetFiles(bucket);
+
+            return Ok(response);
         }
     }
 }
