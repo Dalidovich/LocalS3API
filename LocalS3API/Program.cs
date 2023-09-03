@@ -8,7 +8,7 @@ namespace LocalS3API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddScoped<S3FileService>();
+            builder.AddServices();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -22,6 +22,8 @@ namespace LocalS3API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.AddMiddleware();
 
             app.UseHttpsRedirection();
             app.UseAuthorization();
